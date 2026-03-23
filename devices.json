@@ -1,0 +1,17 @@
+[
+  {
+    "hostname": "FW-LAB-01",
+    "host": "10.0.0.1",
+    "device_type": "juniper_junos"
+  },
+  {
+    "hostname": "AD-LAB-01",
+    "host": "10.0.0.2",
+    "device_type": "adtran_os"
+  },
+  {
+    "hostname": "SW-LAB-01",
+    "host": "192.168.20.1",
+    "device_type": "cisco_ios"
+  }
+]
