@@ -1,0 +1,8 @@
+cisco:
+  - show ip interface brief
+
+adtran:
+  - show version
+
+juniper:
+  - show interfaces terse
