@@ -40,7 +40,6 @@ class NetworkDevice:
             if connection_attempts >= max_retries:
                 print(f"Unable to connect to {self.host} after {max_retries} attempts")
 
-
     def get_config(self):
         device_commands = {
             "cisco_ios": {

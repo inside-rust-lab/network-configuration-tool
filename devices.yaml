@@ -1,11 +1,14 @@
 cisco:
   SW-LAB-01:
-    ip: 10.0.0.2
+    host: 10.0.0.2
+    device_type: cisco_ios
 
 juniper:
   FW-LAB-01:
-    ip: 10.0.0.1
+    host: 10.0.0.1
+    device_type: juniper_junos
 
 adtran:
-  AD-LAB-01:
-    ip: 192.168.254.1
+  AD-01:
+    host: 192.168.254.1
+    device_type: adtran_os
