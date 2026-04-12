@@ -88,15 +88,6 @@ class NetworkDevice:
         print(f"Disconnecting from {self.hostname}...")
         self.net_connect.disconnect()
         return
-
-print("hello")
-nd = NetworkDevice("AD-LAB-01", "10.0.0.2", "adtran_os", "adtran")
-nd.username = "eddie"
-nd.password = "Pencil1#"
-nd.secret = "Pencil1#"
-nd.connect()
-nd.send_commands()
-nd.disconnect()
 '''
 device.py functionality
 

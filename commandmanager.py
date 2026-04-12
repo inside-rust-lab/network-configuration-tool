@@ -78,17 +78,17 @@ class CommandManager:
         return
     
     def send_commands(self):
-        '''
-        going to loop through the devices objects and send the commands to each
-        '''
-
-    def backup_all(self):
         self.get_login_credentials()
         network_devices = self.devices
-        
-        for device in network_devices:
-            self.save_config(device)
 
+        if network_devices is None:
+            return
+
+        for device in network_devices:
+            successful_connection = device.connect()
+            if successful_connection:
+                device.send_commands()
+                device.disconnect()
 '''
 CommandManager functionality:
 
@@ -100,5 +100,7 @@ Creates and manages NetworkDevice objects
 
 '''
 Does device.py load the commands from the yaml file or command manager?
+device.py would?
+commandmanager would cycle through the device objects, tell the device to send the commands from its assigned group
 
 '''
