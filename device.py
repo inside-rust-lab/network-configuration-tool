@@ -1,13 +1,15 @@
 import time
 import random
+import yaml
 from netmiko import ConnectHandler
 from netmiko import NetmikoTimeoutException, NetmikoAuthenticationException
 
 class NetworkDevice:
-    def __init__(self, hostname, host, device_type):
+    def __init__(self, hostname, host, device_type, group):
         self.hostname = hostname
         self.host = host
         self.device_type = device_type
+        self.group = group
         self.username = None
         self.password = None
         self.secret = None
@@ -64,34 +66,37 @@ class NetworkDevice:
                 return None
     
     def send_commands(self):
-        device_commands = {
-            "cisco_ios": {
-                "get_config": "show running-config",
-            },
-            "adtran_os": {
-                "get_config": "show running-config",
-            },
-            "juniper_junos": {
-                "get_config": "show configuration",
-            }
-        }
-        if self.net_connect is not None:
-            try:
-                if self.device_type == "adtran_os" or self.device_type == "cisco_ios":
-                    self.net_connect.enable()
-                get_config_cmd = device_commands[self.device_type]["get_config"]
-                output = self.net_connect.send_command(get_config_cmd)
-                return output              
-            except:
-                print(f"Unable to retrieve config file from {self.hostname}")
-                return None
+        device_commands = []
+        yaml_file_name = "commands.yaml"
 
+        with open(yaml_file_name, "r") as file:
+            commands_file_data = yaml.safe_load(file)
+
+        for group, commands in commands_file_data.items():
+            if group == self.group:
+                device_commands = commands
+        
+        if self.device_type == "adtran_os" or self.device_type == "cisco_ios":
+            self.net_connect.enable()
+        for command in device_commands:
+            output = self.net_connect.send_command(command)
+            print(output)
+        return
+        
     def disconnect(self):
         # needs to accurately handle modes like user exec, global config, etc.
         print(f"Disconnecting from {self.hostname}...")
         self.net_connect.disconnect()
         return
-    
+
+print("hello")
+nd = NetworkDevice("AD-LAB-01", "10.0.0.2", "adtran_os", "adtran")
+nd.username = "eddie"
+nd.password = "Pencil1#"
+nd.secret = "Pencil1#"
+nd.connect()
+nd.send_commands()
+nd.disconnect()
 '''
 device.py functionality
 

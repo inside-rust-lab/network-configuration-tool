@@ -1,12 +1,12 @@
-import json
 import datetime
 import os
-from device import NetworkDevice
 import getpass
+import yaml
+from device import NetworkDevice
 
-class BackupManager:
+class CommandManager:
     def __init__(self):
-        self.json_file_error = None
+        self.yaml_file_error = None
         self.devices = self.load_devices()
     
     def get_login_credentials(self):
@@ -24,33 +24,36 @@ class BackupManager:
             device.secret = credentials["secret"]
     
     def load_devices(self):
-
         network_devices = [] # list of NetworkDevice objects
-        json_file_name = "devices.json"
+        yaml_file_name = "devices.yaml"
         
         try:
-            with open(json_file_name) as file:
-                devices_json_data = json.load(file)
-                self.json_file_error = False
+            with open(yaml_file_name, "r") as file:
+                devices_yaml_data = yaml.safe_load(file)
+                self.yaml_file_error = False
         except FileNotFoundError:
-            print(f"File name {json_file_name} was not found")
-            self.json_file_error = True
+            print(f"File name {yaml_file_name} was not found")
+            self.yaml_file_error = True
             return
-        except json.JSONDecodeError:
-            print(f"JSON data in {json_file_name} is not formatted properly")
-            self.json_file_error = True
+        except yaml.YAMLError:
+            print(f"YAML data in {yaml_file_name} is not formatted properly")
+            self.yaml_file_error = True
             return
         except PermissionError:
-            print(f"You do not have permissions to open {json_file_name}")
-            self.json_file_error = True
+            print(f"You do not have permissions to open {yaml_file_name}")
+            self.yaml_file_error = True
             return
         
-        for device in devices_json_data:
-            device_object = NetworkDevice(device["hostname"], 
-                                          device["host"], 
-                                          device["device_type"])
-            network_devices.append(device_object)
-
+        for group, device_dict in devices_yaml_data.items():
+            for hostname, device_data in device_dict.items():
+                network_devices.append(
+                    NetworkDevice(
+                        hostname,
+                        device_data["host"],
+                        device_data["device_type"],
+                        group
+                    )
+                )
         return network_devices
     
     def save_config(self, device):
@@ -73,24 +76,29 @@ class BackupManager:
             
         device.disconnect()
         return
+    
+    def send_commands(self):
+        '''
+        going to loop through the devices objects and send the commands to each
+        '''
 
-    def backup_device(self, hostname):
-        hostname_found = False
-        for device in self.devices:
-            if device.hostname == hostname:
-                self.get_login_credentials()
-                hostname_found = True
-        
-        if hostname_found:
-            for device in self.devices:
-                if device.hostname == hostname:
-                    self.save_config(device)
-                    return
-        print(f"Hostname {hostname} not found")
-      
     def backup_all(self):
         self.get_login_credentials()
         network_devices = self.devices
         
         for device in network_devices:
             self.save_config(device)
+
+'''
+CommandManager functionality:
+
+Handles user credentials
+Send commands to a single group
+Send commands to all groups
+Creates and manages NetworkDevice objects
+'''
+
+'''
+Does device.py load the commands from the yaml file or command manager?
+
+'''

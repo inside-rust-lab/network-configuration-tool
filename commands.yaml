@@ -3,6 +3,8 @@ cisco:
 
 adtran:
   - show version
+  - show ip interface brief
+  - show arp
 
 juniper:
   - show interfaces terse
