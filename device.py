@@ -1,5 +1,3 @@
-import time
-import random
 import yaml
 from netmiko import ConnectHandler
 from netmiko import NetmikoTimeoutException, NetmikoAuthenticationException
@@ -68,9 +66,23 @@ class NetworkDevice:
     def send_commands(self):
         device_commands = []
         yaml_file_name = "commands.yaml"
+        commands_output = []
 
-        with open(yaml_file_name, "r") as file:
-            commands_file_data = yaml.safe_load(file)
+        try:
+            with open(yaml_file_name, "r") as file:
+                commands_file_data = yaml.safe_load(file)
+        except PermissionError:
+            print(f"You do not have permission to open {yaml_file_name}")
+            return
+        except FileNotFoundError:
+            print(f"No file named {yaml_file_name} was found")
+            return
+        except yaml.YAMLError:
+            print(f"{yaml_file_name} is not formatted properly")
+            return
+        except Exception as error:
+            print(f"Unexpected error: {error}")
+            return
 
         for group, commands in commands_file_data.items():
             if group == self.group:
@@ -79,15 +91,17 @@ class NetworkDevice:
         if self.device_type == "adtran_os" or self.device_type == "cisco_ios":
             self.net_connect.enable()
         for command in device_commands:
-            output = self.net_connect.send_command(command)
-            print(output)
-        return
+            try:
+                output = self.net_connect.send_command(command)
+                commands_output.append(output)
+                print(output)
+            except Exception as error:
+                print(f"Error: {error}")
+                commands_output.append(error)
         
     def disconnect(self):
-        # needs to accurately handle modes like user exec, global config, etc.
         print(f"Disconnecting from {self.hostname}...")
         self.net_connect.disconnect()
-        return
 '''
 device.py functionality
 

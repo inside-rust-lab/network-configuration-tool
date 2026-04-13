@@ -8,3 +8,4 @@ adtran:
 
 juniper:
   - show interfaces terse
+  - show arp
