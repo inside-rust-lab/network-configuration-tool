@@ -92,7 +92,6 @@ class NetworkDevice:
             if command_type == "pre_check" or command_type == "post_check":
                 if self.device_type == "adtran_os" or self.device_type == "cisco_ios":
                     self.net_connect.enable()
-                self.net_connect.send
                 for command in command_list:
                     try:
                         output = self.net_connect.send_command(command)
