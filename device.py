@@ -64,7 +64,7 @@ class NetworkDevice:
                 return None
     
     def send_commands(self):
-        device_commands = []
+        device_commands = {}
         yaml_file_name = "commands.yaml"
         commands_output = []
 
@@ -88,17 +88,28 @@ class NetworkDevice:
             if group == self.group:
                 device_commands = commands
         
-        if self.device_type == "adtran_os" or self.device_type == "cisco_ios":
-            self.net_connect.enable()
-        for command in device_commands:
-            try:
-                output = self.net_connect.send_command(command)
-                commands_output.append(output)
-                print(output)
-            except Exception as error:
-                print(f"Error: {error}")
-                commands_output.append(error)
-        
+        for command_type, command_list in device_commands.items():
+            if command_type == "pre_check" or command_type == "post_check":
+                if self.device_type == "adtran_os" or self.device_type == "cisco_ios":
+                    self.net_connect.enable()
+                self.net_connect.send
+                for command in command_list:
+                    try:
+                        output = self.net_connect.send_command(command)
+                        commands_output.append(output)
+                        print(output)
+                    except Exception as error:
+                        print(f"Error: {error}")
+                        commands_output.append(error)
+            if command_type == "configuration":
+                try:
+                    output = self.net_connect.send_config_set(command_list)
+                    commands_output.append(output)
+                    print(output)
+                except Exception as error:
+                    print(f"Error: {error}")
+                    commands_output.append(error)
+
     def disconnect(self):
         print(f"Disconnecting from {self.hostname}...")
         self.net_connect.disconnect()
@@ -112,9 +123,21 @@ Log outputs
 Get configs
 Connect
 Disconnect
-
-How will the user decide what commands to send to the device?
-
-YAML?
-JSON?
+'''
+'''
+device_commands = {
+    "pre_check": [
+        "show ip interface brief",
+        "show version",
+        "show arp"
+    ],
+    "configuration": [
+        "vlan 100",
+        "name test-vlan"
+    ],
+    "post_check": [
+        "show vlan brief",
+        "write memory"
+    ]
+}
 '''

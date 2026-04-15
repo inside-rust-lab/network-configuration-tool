@@ -1,11 +1,28 @@
 cisco:
-  - show ip interface brief
+  pre_check:
+    - show ip interface brief
+    - show version
+  configuration:
+    - vlan 100
+    - name test-vlan
+  post_check:
+    - show vlan brief
+    - write memory
 
 adtran:
-  - show version
-  - show ip interface brief
-  - show arp
+  pre_check:
+    - show version
+    - show ip interface brief
+    - show arp
+  configuration:
+    - line telnet 0 4
+    - shutdown
+  post_check:
+    - write memory
 
 juniper:
-  - show interfaces terse
-  - show arp
+  pre_check:
+    - show interfaces terse
+    - show arp
+  configuration: []
+  post_check: []
