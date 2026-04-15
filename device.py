@@ -1,4 +1,3 @@
-import yaml
 from netmiko import ConnectHandler
 from netmiko import NetmikoTimeoutException, NetmikoAuthenticationException
 
@@ -17,7 +16,7 @@ class NetworkDevice:
         print(f"Attempting to connect to {self.hostname}...")
         connection_established = False
         connection_attempts = 0
-        max_retries = 3
+        max_retries = 2
 
         while not connection_established and connection_attempts < max_retries:
             try:
@@ -63,31 +62,9 @@ class NetworkDevice:
                 print(f"Unable to retrieve config file from {self.hostname}")
                 return None
     
-    def send_commands(self):
-        device_commands = {}
-        yaml_file_name = "commands.yaml"
+    def send_commands(self, device_commands):
         commands_output = []
 
-        try:
-            with open(yaml_file_name, "r") as file:
-                commands_file_data = yaml.safe_load(file)
-        except PermissionError:
-            print(f"You do not have permission to open {yaml_file_name}")
-            return
-        except FileNotFoundError:
-            print(f"No file named {yaml_file_name} was found")
-            return
-        except yaml.YAMLError:
-            print(f"{yaml_file_name} is not formatted properly")
-            return
-        except Exception as error:
-            print(f"Unexpected error: {error}")
-            return
-
-        for group, commands in commands_file_data.items():
-            if group == self.group:
-                device_commands = commands
-        
         for command_type, command_list in device_commands.items():
             if command_type == "pre_check" or command_type == "post_check":
                 if self.device_type == "adtran_os" or self.device_type == "cisco_ios":

@@ -74,16 +74,36 @@ class CommandManager:
     def send_commands(self):
         self.get_login_credentials()
         network_devices = self.devices
+        yaml_file_name = "commands.yaml"
+
+        try:
+            with open(yaml_file_name, "r") as file:
+                commands_file_data = yaml.safe_load(file)
+        except PermissionError:
+            print(f"You do not have permission to open {yaml_file_name}")
+            return
+        except FileNotFoundError:
+            print(f"No file named {yaml_file_name} was found")
+            return
+        except yaml.YAMLError:
+            print(f"{yaml_file_name} is not formatted properly")
+            return
+        except Exception as error:
+            print(f"Unexpected error: {error}")
+            return
 
         if network_devices is None:
             return
 
         for device in network_devices:
-            successful_connection = device.connect()
-            if successful_connection:
-                device.send_commands()
-                self.save_config(device)
-                device.disconnect()
+            for group, commands in commands_file_data.items():
+                if group == device.group:
+                    successful_connection = device.connect()
+                    if successful_connection:
+                        device.send_commands(commands)
+                        self.save_config(device)
+                        device.disconnect()
+                        break
 '''
 CommandManager functionality:
 
