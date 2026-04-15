@@ -57,10 +57,6 @@ class CommandManager:
         return network_devices
     
     def save_config(self, device):
-        successful_connection = device.connect()
-        if not successful_connection:
-            return
-
         config = device.get_config()
 
         directory = "backups"
@@ -73,8 +69,6 @@ class CommandManager:
         with open(file_name, "w") as file:
             file.write(config)
             print(f"Config was saved as ./{file_name}")
-            
-        device.disconnect()
         return
     
     def send_commands(self):
@@ -88,6 +82,7 @@ class CommandManager:
             successful_connection = device.connect()
             if successful_connection:
                 device.send_commands()
+                self.save_config(device)
                 device.disconnect()
 '''
 CommandManager functionality:

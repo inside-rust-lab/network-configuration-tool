@@ -3,12 +3,12 @@ cisco:
     host: 192.168.20.1
     device_type: cisco_ios
 
-juniper:
-  FW-LAB-01:
-    host: 10.0.0.1
-    device_type: juniper_junos
-
 adtran:
   AD-01:
     host: 10.0.0.2
     device_type: adtran_os
+
+juniper:
+  FW-LAB-01:
+    host: 10.0.0.1
+    device_type: juniper_junos
