@@ -56,7 +56,8 @@ juniper:
     - set security policies from-zone trust to-zone untrust policy trust-to-untrust then permit
     - set security policies from-zone untrust to-zone trust policy dhcp-to-trust match source-address any
     - set security policies from-zone untrust to-zone trust policy dhcp-to-trust match destination-address any
-    - set security policies from-zone untrust to-zone trust policy dhcp-to-trust match application junos-dhcp-client
     - set security policies from-zone untrust to-zone trust policy dhcp-to-trust then permit
+    - set secutiy zone trust host-inbound-traffic protocols all
+    - set secutiy zone trust host-inbound-traffic system-services any-service
     - commit
   post_check: []
