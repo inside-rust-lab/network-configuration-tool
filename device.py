@@ -90,8 +90,6 @@ class NetworkDevice:
                 return None
     
     def send_commands(self, device_commands):
-        commands_output = []
-
         for command_type, command_list in device_commands.items():
             if command_type == "pre_check" or command_type == "post_check":
                 if self.device_type == "adtran_os" or self.device_type == "cisco_ios":
@@ -100,20 +98,16 @@ class NetworkDevice:
                     try:
                         self.logger.debug(f"Sending: {command}")
                         output = self.net_connect.send_command(command)
-                        commands_output.append(output)
                         self.logger.info(f"Output: {output}")
                     except Exception as error:
                         self.logger.error(f"Error: {error}")
-                        commands_output.append(error)
             if command_type == "configuration":
                 try:
                     self.logger.debug(f"Sending: {command_list}")
                     output = self.net_connect.send_config_set(command_list)
-                    commands_output.append(output)
                     self.logger.info(f"Output: {output}")
                 except Exception as error:
                     self.logger.error(f"Error: {error}")
-                    commands_output.append(error)
 
     def disconnect(self):
         self.logger.info(f"Disconnecting from {self.hostname}...")

@@ -5,13 +5,14 @@ cm.send_commands()
 
 '''
 To do:
-More error handling
-I want to make it so you don't have to have multiple groups in the commands.yaml file
-Basically it only connects to the groups that are configured in commands.yaml
-logging
-Simultaneous configuration
 Add device roles
     Make it so you can configure all cisco switches, all juniper firewalls, all cisco routers
 Add functionality to configure individual devices too
+I only have a group which doesn't scale all that well
+I think a single device needs to have the capability to be assigned multiple roles or have multiple tags
+Examples:
+wan device, access switch, core switch, switch, router, firewall, juniper, adtran, cisco etc.
+How do I do this?
+* shoulder shrug
 Build all of this into a docker container
 '''

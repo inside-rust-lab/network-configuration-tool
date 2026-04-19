@@ -107,7 +107,7 @@ class CommandManager:
         try:
             with open(yaml_file_name, "r") as file:
                 commands_file_data = yaml.safe_load(file)
-                logger.debug(f"Successfully loaded ")
+                logger.debug(f"Successfully loaded {yaml_file_name}")
         except PermissionError:
             logger.error(f"You do not have permission to open {yaml_file_name}")
             return
